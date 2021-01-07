@@ -17,41 +17,46 @@ although you might need to play around with the font size and text positioning.
 ## Software requirements
 
 * Python 3+
-`sudo apt install python3`
+
+    `sudo apt install python3`
 
 * [Waveshare library](https://github.com/waveshare/e-Paper)
   
-  ```
-  git clone https://github.com/waveshare/e-Paper
-  sudo python3 e-Paper/RaspberryPi_JetsonNano/python/setup.py install
-  ```
+    `git clone https://github.com/waveshare/e-Paper`
+
+    `sudo python3 e-Paper/RaspberryPi_JetsonNano/python/setup.py install`
   
 * GnuPG and oathtool
-`sudo apt install gpg oathtool`
+
+    `sudo apt install gpg oathtool`
 
 ## How it works
 
-Just a little heads up:
-This script is not considered safe at all, it's just a little home/hobby project I made for fun.
+### Just a little heads up:
 
-Please do not use it in a release environment. I cannot even count the holes in it.
+This script is not considered safe at all. I
 
-Anyways:
+t's just a little home/hobby project I made for fun.
 
-2paco starts listening on netcat (default port is `9002`).
+Please **do not** use it in a **release** environment. I cannot even count the security holes in it.
 
-For testing i just used the same device, stated my request and connected back to 2paco.
+### Anyways:
 
-`echo IDENTIFIER | nc -q 0 localhost 9002`
+* 2paco starts listening on netcat (default port is `9002`).
 
-You could issue requests from another desktop. E.g.
+* For testing i just used the same device, stated my request and connected back to 2paco.
 
-`echo bitwarden | nc -q 0 raspberrypi.ip 9002`
+    `echo IDENTIFIER | nc -q 0 localhost 9002`
 
-The screen then updates to the current bitwarden 2FA code and resets when the code's lifetime expires.
+* You could issue requests from another desktop. E.g.
 
-The ideal solution for this would be to solder 2 buttons onto the Pi and using them for displaying codes.
-Disabling WiFi would essentially be airgapping the device, but that still won't make it even near to being 100% fool-proof.
+    `echo bitwarden | nc -q 0 raspberrypi.ip 9002`
+
+* The screen then updates to the current bitwarden 2FA code and resets when the code's lifetime expires.
+
+A better, security oriented solution for this project would be to solder 2 buttons onto the Pi and using them for displaying codes.
+
+Disabling WiFi would essentially be airgapping the Pi, but that still won't make it even near to being 100% fool-proof.
 
 ## Usage
 
