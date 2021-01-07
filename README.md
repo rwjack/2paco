@@ -34,11 +34,11 @@ although you might need to play around with the font size and text positioning.
 
 ### Just a little heads up:
 
-This script is not considered safe at all. I
+This script is not considered safe at all.
 
-t's just a little home/hobby project I made for fun.
+It's just a little home/hobby project I made for fun.
 
-Please **do not** use it in a **release** environment. I cannot even count the security holes in it.
+Please **do not use** it in a **release** environment. I cannot even count the security holes in it.
 
 ### Anyways:
 
