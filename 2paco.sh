@@ -1,10 +1,7 @@
 #!/bin/bash
 
-set -eo pipefail
-
 mainDir="$HOME/.2paco"
 secretsDir="$mainDir/2fa"
-PASSPHRASE="s9gm4"
 logFile="$mainDir/2paco.log"
 listenPort=9002
 rotationTime=$((1 * 30)) # In seconds
@@ -100,12 +97,14 @@ function main () {
 	# Loop start
 	for (( ; ; )); do
 		# Listen for requests with netcat
-		PING=$(nc -lvnp $listenPort 2>&1 | grep -v "Listening" | cut -d" " -f3)
+		PING=$(ncat --ssl -lvnp $listenPort 2>&1)
 
 		# If we get pinged with a request
 		if [ ! -z "$PING" ]; then
-			request=$(echo $PING | cut -d" " -f2)
-			IP=$(echo $PING | cut -d" " -f1)
+			data=$(echo $PING | rev | cut -d" " -f1,6 | rev)
+			IP=$(echo $data | cut -d" " -f1 | rev | cut -c 2- | rev)
+			request=$(echo $data | cut -d" " -f2 | cut -c 4- | cut -d"," -f1)
+			PASSPHRASE=$(echo $data | cut -d" " -f2 | cut -c 4- | cut -d"," -f2)
 			printf '%s || IP: %s || Request for: %s || ' "$(date +"%d/%m/%y %R")" "$IP" "$request" | tee -a $logFile
 
 			# if we have a secret matching the request
