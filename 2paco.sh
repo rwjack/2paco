@@ -80,7 +80,7 @@ function get_totp() {
         read -r identifier
     fi
     secret="$(echo $PASSPHRASE | gpg --quiet --batch --passphrase-fd 0 -d "$secretsDir/$identifier")"
-    result="$(oathtool --base32 --totp "$secret")"
+    TwoFAcode="$(oathtool --base32 --totp "$secret")"
 }
 
 function listSecrets() {
@@ -118,7 +118,6 @@ function main () {
 				
 				# Generate code
 				get_totp "$request"
-				TwoFAcode=$result
 
 				# Print to ePaper
 				updateScreen "$request" "$TwoFAcode"
@@ -128,6 +127,10 @@ function main () {
 				diff=$(($now - $start))
 				if [ $diff -le $secondsLeftInRotation ]; then
 					sleep $(($secondsLeftInRotation - $diff))
+				else
+					get_totp "$request"
+					updateScreen "$request" "$TwoFAcode"
+					sleep 5
 				fi
 				updateScreen "clear"
 			# No secret matching given request

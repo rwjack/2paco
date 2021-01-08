@@ -5,7 +5,7 @@
 #import traceback
 import sys
 import os
-from waveshare_epd import epd2in13b_V3
+from waveshare_epd import epd2in13d
 import time
 from PIL import Image,ImageDraw,ImageFont
 
@@ -26,11 +26,10 @@ def print_ePaper(serviceText, codeText):
     try:
         #logging.basicConfig(level=logging.DEBUG)
         #logging.info("2paco.sh is Printing 2FA to ePaper...")
-        
-        epd = epd2in13b_V3.EPD()
         #logging.info("init and Clear")
+
+        epd = epd2in13d.EPD()
         epd.init()
-        time.sleep(1)
         
         # Drawing on the image
         #logging.info("Drawing")
@@ -40,10 +39,8 @@ def print_ePaper(serviceText, codeText):
         # Drawing on the Horizontal image
         #logging.info("1.Drawing on the Horizontal image...") 
         HBlackimage = Image.new('1', (epd.height, epd.width), 255)
-        HRYimage = Image.new('1', (epd.height, epd.width), 255)
         
         drawblack = ImageDraw.Draw(HBlackimage)
-        drawry = ImageDraw.Draw(HRYimage)
     
         wService, hService = drawblack.textsize(serviceText, font = serviceFont)
         wCode, hCode = drawblack.textsize(codeText, font = codeFont)
@@ -56,23 +53,23 @@ def print_ePaper(serviceText, codeText):
         
         rotated = HBlackimage.rotate(180.0, expand=1)
 
-        epd.display(epd.getbuffer(rotated), epd.getbuffer(HRYimage))
+        epd.DisplayPartial(epd.getbuffer(rotated))
         
         epd.Dev_exit()
             
     except KeyboardInterrupt:    
         #logging.info("ctrl + c:")
-        epd2in13b_V3.epdconfig.module_exit()
+        epd2in13d.epdconfig.module_exit()
         exit()
 
 def clear_ePaper():
     try:
-        epd = epd2in13b_V3.EPD()
+        epd = epd2in13d.EPD()
         epd.init()
-        epd.Clear()
+        epd.Clear(0xFF)
 
     except KeyboardInterrupt:
-        epd2in13b_V3.epdconfig.module_exit()
+        epd2in13d.epdconfig.module_exit()
         exit()
 
 if __name__ == "__main__":
