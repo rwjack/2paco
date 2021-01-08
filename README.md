@@ -26,9 +26,9 @@ although you might need to play around with the font size and text positioning.
 
     `sudo python3 e-Paper/RaspberryPi_JetsonNano/python/setup.py install`
   
-* GnuPG and oathtool
+* GnuPG, oathtool and ncat
 
-    `sudo apt install gpg oathtool`
+    `sudo apt install gpg oathtool ncat`
 
 ## How it works
 
@@ -44,13 +44,26 @@ Please **do not use** it in a **release** environment. I cannot even count the s
 
 * 2paco starts listening on netcat (default port is `9002`).
 
-* For testing i just used the same device, stated my request and connected back to 2paco.
+* For testing i just used the same device, stated my request and connected back to 2paco. The `sp:` part is also important because it helps the script identify the format of data being sent to it. S stands for service/identifier, P stands for password.
 
-    `echo IDENTIFIER | nc -q 0 localhost 9002`
+    `echo "sp:IDENTIFIER,PASS" | ncat --ssl localhost 9002`
+  
+  * Identifier is the name of the service for which you are requesting a 2FA code.
+  Password is the same one you used when encrypting a service token with `./2paco --add [Identifier]`
 
-* You could issue requests from another desktop. E.g.
+    
 
-    `echo bitwarden | nc -q 0 raspberrypi.ip 9002`
+* E.g. You could issue requests from another desktop.
+
+    `echo "sp:bitwarden,t0ps3cret" | ncat --ssl raspberrypi.ip 9002`
+    
+    * Which can be shortened with:
+    
+        `alias 2fa="ncat --ssl raspberrypi.ip 9002"`
+        
+    * So you can use:
+        
+        `echo "sp:bitwarden,t0ps3cret" | 2fa`
 
 * The screen then updates to the current bitwarden 2FA code and resets when the code's lifetime expires.
 
@@ -71,7 +84,6 @@ You can edit `2paco.sh` and change the following options:
 
 * `mainDir` : Directory where secrets, log and python script should be stored.
 * `secretsDir` : Directory where secrets are stored.
-* `PASSPHRASE` : Same one you used to encrypt the 2FA tokens.
 * `logFile` : Directory and name of the log file.
 * `listenPort` : Port on which netcat should listen.
 * `rotationTime` : Ammount of seconds in which your 2FA codes rotate (Default is 30s).
