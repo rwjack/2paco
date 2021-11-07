@@ -28,9 +28,11 @@ function checkSecrets () {
 		chmod 0700 "$secretsDir"
 	fi
 	
-	for file in "$secretsDir/*"; do
-		secrets=("${secret[@]}" "$(basename $file)")
+	for file in `find $secretsDir -type f -printf "%f\n"`; do
+		secrets[${#secrets[@]}]=$file
 	done
+
+	echo ${secrets[*]}
 }
 
 checkSecrets
@@ -50,8 +52,8 @@ function checkResources () {
 	fi
 }
 
-checkResources "pic"
-checkResources "update-ePaper.py"
+#checkResources "pic"
+#checkResources "update-ePaper.py"
 
 
 ####### Copyright (c) 2018, info AT markusholtermann DOT eu ########
@@ -108,32 +110,23 @@ function main () {
 			printf '%s || IP: %s || Request for: %s || ' "$(date +"%d/%m/%y %R")" "$IP" "$request" | tee -a $logFile
 
 			# if we have a secret matching the request
-			if [[ "${secrets[@]}" == $request ]]; then
-				printf 'Approved\n' | tee -a $logFile
-				
-				# if too slow ; insert if $secondsLeftInRotation < 7 wait for next cycle
-				secondsLeftInRotation=$(($rotationTime - ($(date +%S) % $rotationTime)))
-				start=$(date +%s)
-				
-				# Generate code
-				get_totp "$request"
-
-				# Print to ePaper
-				updateScreen "$request" "$TwoFAcode"
-
-				# Sleep and clear screen at the beginning of the next 2FA rotation
-				now=$(date +%s)
-				diff=$(($now - $start))
-				if [ $diff -le $secondsLeftInRotation ]; then
-					sleep $(($secondsLeftInRotation - $diff))
-				else
+			OK=0
+			for secret in ${secrets[@]}; do
+				if [[ $secret == $request ]]; then
+					printf 'Approved\n' | tee -a $logFile
+					
+					# Generate code
 					get_totp "$request"
-					updateScreen "$request" "$TwoFAcode"
-					sleep 5
+					sleep 1
+
+					# Print to ePaper
+					echo $TwoFAcode | ncat --ssl $IP $listenPort
+					OK=1
+					break
 				fi
-				updateScreen "clear"
-			# No secret matching given request
-			else
+			done
+			if [ $OK == 0 ]; then
+				# No secret matching given request
 				printf 'Denied\n' | tee -a $logFile
 			fi
 		# Still waiting for a ping
@@ -153,7 +146,7 @@ cat << "EOF"
  |____| .__/ \__,_|\___\___/ 
       | |                    
       |_|                    
-	https://github.com/secubyte/
+	https://github.com/cysea/
 
 EOF
 

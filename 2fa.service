@@ -1,0 +1,14 @@
+[Unit]
+After = network.target 
+ 
+[Service]
+Type = simple
+ExecStart = /home/pi/.2paco/2fa.sh
+User = pi
+Group = pi
+Restart = on-failure
+RestartSec = 5
+TimeoutStartSec = infinity
+ 
+[Install]
+WantedBy = multi-user.target
