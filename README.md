@@ -8,11 +8,13 @@ Generate 2fa codes on your RaspberryPi with an ePpaper display.
 
 ## Intro
 
-* This script is written and meant to be used with a Waveshare e-Paper RPi 2.13 inch 3color hat.
-https://www.waveshare.com/product/2.13inch-e-paper-hat-b.htm
+~~* This script is written and meant to be used with a Waveshare e-Paper RPi 2.13 inch 3color hat.~~
+~~https://www.waveshare.com/product/2.13inch-e-paper-hat-b.htm~~
 
-* Editing `update-ePaper.py` to include another library from the waveshare library should work just fine,
-although you might need to play around with the font size and text positioning.
+~~* Editing `update-ePaper.py` to include another library from the waveshare library should work just fine,~~
+~~although you might need to play around with the font size and text positioning.~~
+
+* This branch returns the code via `ncat` instead of printing it on the paper.
 
 ## Software requirements
 
@@ -65,7 +67,9 @@ Please **do not use** it in a **release** environment. I cannot even count the s
         
         `echo "sp:bitwarden,t0ps3cret" | 2fa`
 
-* The screen then updates to the current bitwarden 2FA code and resets when the code's lifetime expires.
+    * Although with this branch, this is simplified with `get.sh`. You can add the contents of `get.sh` to your `.bashrc`, and invoke the get funcion with the name of the desired service. The service needs to be firstly created on the machine hosting 2paco with `./2paco --add. Afterwards, `get` can be invoked with the service name and 2paco will return the code via the terminal.
+
+~~* The screen then updates to the current bitwarden 2FA code and resets when the code's lifetime expires.~~
 
 A better, security oriented solution for this project would be to solder 2 buttons onto the Pi and using them for displaying codes.
 
@@ -88,7 +92,7 @@ You can edit `2paco.sh` and change the following options:
 * `listenPort` : Port on which netcat should listen.
 * `rotationTime` : Ammount of seconds in which your 2FA codes rotate (Default is 30s).
 
-You can also add images, which will be printed on the ePaper next to the identifier, inside the `~/.2paco/pic` folder.
-For the 2.13 inch display, the dimensions should be `25x25` pixels and the images should use the `.bmp` file format.
+~~You can also add images, which will be printed on the ePaper next to the identifier, inside the `~/.2paco/pic` folder.~~
+~~For the 2.13 inch display, the dimensions should be `25x25` pixels and the images should use the `.bmp` file format.~~
 
-As for the other dimension displays, feel free to customize to your heart's content.
+~~As for the other dimension displays, feel free to customize to your heart's content.~~
