@@ -1,5 +1,28 @@
 #!/bin/bash
 
+### Use this .bashrc function for easy accessibility
+: '
+get() {
+        options=("service1" "service2")
+        select opt in "${options[@]}"; do
+                S=$opt
+
+                echo -n "P: "
+                read -s P
+                echo
+                echo
+                echo "sp:$S,$P" | ncat --ssl <2pacoIP> <2pacoPort> 2>&1
+                echo "===="
+                #echo -n "|"
+                timeout 5 echo `ncat --ssl -lnp <2pacoPort> 2>&1` | xclip -sel clip && echo "|OK|"
+                echo "===="
+                echo
+                break
+        done
+}
+'
+
+
 mainDir="$HOME/.2paco"
 secretsDir="$mainDir/2fa"
 logFile="$mainDir/2paco.log"
